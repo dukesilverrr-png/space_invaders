@@ -23,6 +23,9 @@ def main():
     ship_right_x = 275
     ship_bottom_y = 480
 
+    draw_player_ship(canvas)
+
+def draw_player_ship(canvas):
     # Ship body
     canvas.create_oval(220, 435, 280, 482, "dark gray")
     canvas.create_oval(228, 440, 272, 476, "gray")
