@@ -4,7 +4,17 @@ CANVAS_WIDTH = 500
 CANVAS_HEIGHT = 500
 
 def main():
+
     canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    draw_background(canvas)
+
+    draw_player_ship(canvas)
+
+    input("Press Enter to close the window...")
+
+def draw_background(canvas):
+    # Black space
     canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, "black")
 
     # Stars
@@ -16,14 +26,6 @@ def main():
     canvas.create_oval(80, 180, 84, 184, "white")
     canvas.create_oval(260, 210, 264, 214, "white")
     canvas.create_oval(460, 190, 464, 194, "white")
-
-    # Player ship
-    ship_left_x = 225
-    ship_top_y = 440
-    ship_right_x = 275
-    ship_bottom_y = 480
-
-    draw_player_ship(canvas)
 
 def draw_player_ship(canvas):
     # Ship body
@@ -72,6 +74,5 @@ def draw_player_ship(canvas):
     canvas.create_rectangle(235, 470, 242, 475, "black")
     canvas.create_rectangle(258, 470, 265, 475, "black")
     
-    input("Press Enter to close the window...")
 if __name__ == "__main__":
     main()
