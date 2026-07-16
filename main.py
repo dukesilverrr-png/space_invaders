@@ -3,6 +3,10 @@ from graphics import Canvas
 CANVAS_WIDTH = 500
 CANVAS_HEIGHT = 500
 
+SHIP_SPEED = 10
+SHIP_MOVE_LEFT = -SHIP_SPEED
+SHIP_MOVE_RIGHT = SHIP_SPEED
+
 def main():
 
     canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -12,6 +16,11 @@ def main():
     player_ship = draw_player_ship(canvas)
 
     input("Press Enter to close the window...")
+
+def move_player_ship(canvas,player_ship,dx):
+    for ship_part in player_ship:
+        canvas.move(ship_part, dx, 0)
+
 
 def draw_background(canvas):
     # Black space
