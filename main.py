@@ -1,4 +1,7 @@
 from graphics import Canvas
+import time
+
+DELAY = 0.02
 
 CANVAS_WIDTH = 500
 CANVAS_HEIGHT = 500
@@ -15,7 +18,17 @@ def main():
 
     player_ship = draw_player_ship(canvas)
 
-    input("Press Enter to close the window...")
+    while True:
+        keys_pressed = canvas.get_new_key_presses()
+
+        for key in keys_pressed:            
+            if key.keysym == "a":
+                move_player_ship(canvas, player_ship, SHIP_MOVE_LEFT)
+            elif key.keysym == "d":
+                move_player_ship(canvas, player_ship, SHIP_MOVE_RIGHT)
+
+        canvas.update()
+        time.sleep(DELAY)    
 
 def move_player_ship(canvas,player_ship,dx):
     for ship_part in player_ship:
