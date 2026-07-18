@@ -31,9 +31,24 @@ def main():
         time.sleep(DELAY)    
 
 def move_player_ship(canvas,player_ship,dx):
+
     for ship_part in player_ship:
         canvas.move(ship_part, dx, 0)
 
+    player_ship_left_x = canvas.get_left_x(player_ship[11])
+    player_ship_right_x = canvas.get_left_x(player_ship[13]) + 30
+
+    if player_ship_left_x < 0:
+        correction = -player_ship_left_x
+
+        for ship_part in player_ship:
+            canvas.move(ship_part, correction,0)
+    
+    if player_ship_right_x > CANVAS_WIDTH:
+        correction = CANVAS_WIDTH - player_ship_right_x
+
+        for ship_part in player_ship:
+            canvas.move(ship_part, correction,0)    
 
 def draw_background(canvas):
     # Black space
