@@ -14,6 +14,9 @@ LASER_WIDTH = 4
 LASER_HEIGHT = 12
 
 
+ENEMY_WIDTH = 60
+ENEMY_HEIGHT = 34
+
 def main():
 
     canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -27,6 +30,8 @@ def main():
     draw_background(canvas)
 
     player_ship = draw_player_ship(canvas)
+    
+    enemy = draw_enemy(canvas, 215, 70)
 
     lasers = []
     
@@ -180,6 +185,129 @@ def draw_player_ship(canvas):
     player_ship.append(right_lower_armor_panel)
 
     return player_ship
+
+
+def draw_enemy(canvas, enemy_x, enemy_y):
+    enemy_ship = []
+
+    # Dark underside
+    underside = canvas.create_oval(
+        enemy_x + 6,
+        enemy_y + 16,
+        enemy_x + 54,
+        enemy_y + 32,
+        "dark gray"
+    )
+    enemy_ship.append(underside)
+
+    # Main silver disc
+    main_disc = canvas.create_oval(
+        enemy_x,
+        enemy_y + 10,
+        enemy_x + 60,
+        enemy_y + 27,
+        "light gray"
+    )
+    enemy_ship.append(main_disc)
+
+    # Metallic rim
+    outer_rim = canvas.create_rectangle(
+        enemy_x + 3,
+        enemy_y + 16,
+        enemy_x + 57,
+        enemy_y + 22,
+        "gray"
+    )
+    inner_rim = canvas.create_rectangle(
+        enemy_x + 7,
+        enemy_y + 17,
+        enemy_x + 53,
+        enemy_y + 20,
+        "white"
+    )
+    enemy_ship.append(outer_rim)
+    enemy_ship.append(inner_rim)
+
+    # Glass cockpit dome
+    dome = canvas.create_oval(
+        enemy_x + 16,
+        enemy_y + 1,
+        enemy_x + 44,
+        enemy_y + 20,
+        "dark turquoise"
+    )
+    dome_glass = canvas.create_oval(
+        enemy_x + 20,
+        enemy_y + 4,
+        enemy_x + 40,
+        enemy_y + 17,
+        "cyan"
+    )
+    dome_highlight = canvas.create_oval(
+        enemy_x + 23,
+        enemy_y + 5,
+        enemy_x + 29,
+        enemy_y + 9,
+        "white"
+    )
+    enemy_ship.append(dome)
+    enemy_ship.append(dome_glass)
+    enemy_ship.append(dome_highlight)
+
+    # Running lights
+    left_light = canvas.create_oval(
+        enemy_x + 8,
+        enemy_y + 19,
+        enemy_x + 13,
+        enemy_y + 24,
+        "red"
+    )
+    left_middle_light = canvas.create_oval(
+        enemy_x + 20,
+        enemy_y + 21,
+        enemy_x + 25,
+        enemy_y + 26,
+        "yellow"
+    )
+    right_middle_light = canvas.create_oval(
+        enemy_x + 35,
+        enemy_y + 21,
+        enemy_x + 40,
+        enemy_y + 26,
+        "yellow"
+    )
+    right_light = canvas.create_oval(
+        enemy_x + 47,
+        enemy_y + 19,
+        enemy_x + 52,
+        enemy_y + 24,
+        "red"
+    )
+    enemy_ship.append(left_light)
+    enemy_ship.append(left_middle_light)
+    enemy_ship.append(right_middle_light)
+    enemy_ship.append(right_light)
+
+    # Glowing propulsion reactor
+    reactor = canvas.create_oval(
+        enemy_x + 23,
+        enemy_y + 25,
+        enemy_x + 37,
+        enemy_y + 32,
+        "purple"
+    )
+    reactor_glow = canvas.create_oval(
+        enemy_x + 27,
+        enemy_y + 27,
+        enemy_x + 33,
+        enemy_y + 34,
+        "magenta"
+    )
+    enemy_ship.append(reactor)
+    enemy_ship.append(reactor_glow)
+
+    return enemy_ship
+
 
 if __name__ == "__main__":
     main()
