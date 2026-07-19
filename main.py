@@ -31,15 +31,17 @@ def main():
     lasers = []
     
     while True:
-        keys_pressed = canvas.get_new_key_presses()
+        keys_pressed = canvas.get_new_key_presses()#Get the new key presses since the last iteration
 
-        for key in keys_pressed:            
+        for key in keys_pressed:#Check for key presses and add them to the keys_held set            
             if key.keysym == "a":
                 keys_held.add("a")
             elif key.keysym == "d":
                 keys_held.add("d")
-            elif key.keysym == "space":
-                lasers.append(fire_laser(canvas, player_ship))
+            elif key.keysym == "space" and "space" not in keys_held:
+                keys_held.add("space")
+                if len(lasers) < 3:  # Limit the number of lasers on screen to 3
+                    lasers.append(fire_laser(canvas, player_ship))
         
         if "a" in keys_held:
             move_player_ship(canvas, player_ship, SHIP_MOVE_LEFT)
