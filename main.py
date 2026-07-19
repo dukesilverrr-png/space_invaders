@@ -19,8 +19,8 @@ ENEMY_HEIGHT = 34
 ENEMY_COUNT = 5
 ENEMY_SPACING = 12
 ENEMY_START_Y = 70
-ENEMY_SPEED =3
-ENEMY_DROP_DISTANCE = 15
+ENEMY_SPEED =7
+ENEMY_DROP_DISTANCE = 30
 
 def main():
 
@@ -48,14 +48,47 @@ def main():
 
     while True:
         if game_over:
+            game_over_keys_pressed = canvas.get_new_key_presses()
+
+            for key in game_over_keys_pressed:
+                
+                if key.keysym == "q":
+                    canvas.winfo_toplevel().destroy()
+                    return
+                elif key.keysym == "r":
+                    canvas.clear()
+                    draw_background(canvas)
+
+                    player_ship = draw_player_ship(canvas)
+                    enemies = draw_enemy_fleet(canvas)
+
+                    lasers = []
+                    enemy_dx = ENEMY_SPEED
+                    keys_held.clear()
+
+                    game_over = False
+                    game_over_title = None
+                    game_over_frames = 0
+                    break
+
+            if not game_over:
+                canvas.update()
+                time.sleep(DELAY)
+                continue
             game_over_frames += 1
 
             if game_over_frames % 15 == 0:
                 if (game_over_frames // 15) % 2 == 0:
-                    canvas.set_fill_color(game_over_title, "dark red")
+                    canvas.set_fill_color(
+                        game_over_title,
+                        "dark red"
+                    )
                 else:
-                    canvas.set_fill_color(game_over_title, "red")
-         
+                    canvas.set_fill_color(
+                        game_over_title,
+                        "red"
+                    )
+
             canvas.update()
             time.sleep(DELAY)
             continue
@@ -162,6 +195,23 @@ def draw_game_over(canvas):
         CANVAS_WIDTH / 2,
         CANVAS_HEIGHT / 2 + 45,
         "THE INVASION WAS SUCCESSFUL",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2 + 68,
+        "Press 'r' to retry",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2 + 90,
+        "Press 'q' to quit",
         "center",
         ("Arial", 12, "bold"),
         "white"
