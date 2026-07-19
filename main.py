@@ -10,25 +10,62 @@ SHIP_SPEED = 10
 SHIP_MOVE_LEFT = -SHIP_SPEED
 SHIP_MOVE_RIGHT = SHIP_SPEED
 
+LASER_WIDTH = 4
+LASER_HEIGHT = 12
+
+
 def main():
 
     canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    keys_held = set()
+    canvas.bind(
+        "<KeyRelease>",
+        lambda event: keys_held.discard(event.keysym)
+    )
 
     draw_background(canvas)
 
     player_ship = draw_player_ship(canvas)
 
+    lasers = []
+    
     while True:
         keys_pressed = canvas.get_new_key_presses()
 
         for key in keys_pressed:            
             if key.keysym == "a":
-                move_player_ship(canvas, player_ship, SHIP_MOVE_LEFT)
+                keys_held.add("a")
             elif key.keysym == "d":
-                move_player_ship(canvas, player_ship, SHIP_MOVE_RIGHT)
+                keys_held.add("d")
+            elif key.keysym == "space":
+                lasers.append(fire_laser(canvas, player_ship))
+        
+        if "a" in keys_held:
+            move_player_ship(canvas, player_ship, SHIP_MOVE_LEFT)
+        if "d" in keys_held:
+            move_player_ship(canvas, player_ship, SHIP_MOVE_RIGHT)
 
+        for laser in lasers[:]:#Make a copy of the lasers list to avoid modifying it while iterating
+            canvas.move(laser, 0, -10)
+            laser_top_y = canvas.get_top_y(laser)
+
+            if laser_top_y < 0: #If the laser has moved off the top of the canvas, remove it from the canvas and the lasers list
+                canvas.delete(laser)
+                lasers.remove(laser)
+                
         canvas.update()
         time.sleep(DELAY)    
+
+
+def fire_laser(canvas, player_ship):
+    laser_left_x = canvas.get_left_x(player_ship[6])  # Get the left x-coordinate of the nose cannon tip
+    laser_top_y = canvas.get_top_y(player_ship[6]) 
+    laser_right_x = laser_left_x + LASER_WIDTH 
+    laser_bottom_y = laser_top_y + LASER_HEIGHT
+    laser = canvas.create_rectangle(laser_left_x, laser_top_y, laser_right_x, laser_bottom_y, "red")# Spawn the laser at the nose cannon tip
+
+    return laser
 
 def move_player_ship(canvas,player_ship,dx):
 
