@@ -19,8 +19,8 @@ ENEMY_HEIGHT = 34
 ENEMY_COUNT = 5
 ENEMY_SPACING = 12
 ENEMY_START_Y = 70
-ENEMY_SPEED =7
-ENEMY_DROP_DISTANCE = 30
+ENEMY_SPEED = 3
+ENEMY_DROP_DISTANCE = 15
 
 def main():
 
@@ -46,8 +46,12 @@ def main():
     game_over_title = None
     game_over_frames = 0
 
+    game_won = False
+    victory_title = None
+    victory_frames = 0
+
     while True:
-        if game_over:
+        if game_over or game_won:
             game_over_keys_pressed = canvas.get_new_key_presses()
 
             for key in game_over_keys_pressed:
@@ -69,24 +73,39 @@ def main():
                     game_over = False
                     game_over_title = None
                     game_over_frames = 0
+
+                    game_won = False
+                    victory_title = None
+                    victory_frames = 0
                     break
 
-            if not game_over:
+            if not game_over and not game_won:
                 canvas.update()
                 time.sleep(DELAY)
-                continue
-            game_over_frames += 1
 
-            if game_over_frames % 15 == 0:
-                if (game_over_frames // 15) % 2 == 0:
+            if game_over:
+                game_over_frames += 1
+                active_title = game_over_title
+                active_frames = game_over_frames
+                first_color = "dark red"
+                second_color = "red"
+            else:
+                victory_frames += 1
+                active_title = victory_title
+                active_frames = victory_frames
+                first_color = "dark green"
+                second_color = "lime green"
+
+            if active_frames % 15 == 0:
+                if (active_frames // 15) % 2 == 0:
                     canvas.set_fill_color(
-                        game_over_title,
-                        "dark red"
+                        active_title,
+                        first_color
                     )
                 else:
                     canvas.set_fill_color(
-                        game_over_title,
-                        "red"
+                        active_title,
+                        second_color
                     )
 
             canvas.update()
@@ -152,11 +171,16 @@ def main():
                     canvas.delete(part)
 
                 enemies.remove(collided_enemy)
+
                 continue
 
             if laser_top_y < 0:
                 canvas.delete(laser)
                 lasers.remove(laser)
+
+        if len(enemies) == 0 and not game_won:
+            game_won = True
+            victory_title = draw_victory(canvas)
 
         move_enemy_row(canvas, enemies, enemy_dx)
 
@@ -171,6 +195,54 @@ def main():
         canvas.update()
         time.sleep(DELAY)
 
+
+def draw_victory(canvas):
+    canvas.create_text(
+        CANVAS_WIDTH / 2 + 3,
+        CANVAS_HEIGHT / 2 + 3,
+        "VICTORY",
+        "center",
+        ("Arial", 36, "bold"),
+        "dark green"
+    )
+
+    victory_title = canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2,
+        "VICTORY",
+        "center",
+        ("Arial", 36, "bold"),
+        "lime green"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2 + 45,
+        "THE INVASION HAS BEEN REPELLED",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2 + 68,
+        "Press 'r' to retry",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2 + 90,
+        "Press 'q' to quit",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    return victory_title
 
 def draw_game_over(canvas):
     canvas.create_text(
