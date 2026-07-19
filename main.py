@@ -19,6 +19,8 @@ ENEMY_HEIGHT = 34
 ENEMY_COUNT = 5
 ENEMY_SPACING = 12
 ENEMY_START_Y = 70
+ENEMY_SPEED = 2
+ENEMY_DROP_DISTANCE = 12
 
 def main():
 
@@ -35,6 +37,8 @@ def main():
     player_ship = draw_player_ship(canvas)
     
     enemies = draw_enemy_fleet(canvas)
+
+    enemy_dx = ENEMY_SPEED
 
     lasers = []
     
@@ -103,6 +107,12 @@ def main():
             if laser_top_y < 0:
                 canvas.delete(laser)
                 lasers.remove(laser)
+
+        move_enemy_row(canvas, enemies, enemy_dx)
+
+        if enemy_row_hit_edge(canvas, enemies):
+            enemy_dx = -enemy_dx
+            move_enemy_row_down(canvas, enemies)
 
         canvas.update()
         time.sleep(DELAY)
@@ -235,6 +245,25 @@ def draw_player_ship(canvas):
     player_ship.append(right_lower_armor_panel)
 
     return player_ship
+
+def enemy_row_hit_edge(canvas, enemies):
+    if len(enemies) == 0:
+        return False
+
+    left_edge = canvas.get_left_x(enemies[0][1])
+    right_edge = (canvas.get_left_x(enemies[-1][1]) + ENEMY_WIDTH)
+
+    return left_edge <= 0 or right_edge >= CANVAS_WIDTH
+
+def move_enemy_row(canvas, enemies, dx):
+    for enemy in enemies:
+        for enemy_part in enemy:
+            canvas.move(enemy_part, dx, 0)
+
+def move_enemy_row_down(canvas, enemies):
+    for enemy in enemies:
+        for enemy_part in enemy:
+            canvas.move(enemy_part,0,ENEMY_DROP_DISTANCE)
 
 def draw_enemy_fleet(canvas):
     enemies = []
