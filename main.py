@@ -55,6 +55,21 @@ def main():
 
         for laser in lasers[:]:#Make a copy of the lasers list to avoid modifying it while iterating
             canvas.move(laser, 0, -10)
+
+            laser_left_x = canvas.get_left_x(laser)
+            laser_right_x = laser_left_x + LASER_WIDTH
+            laser_top_y = canvas.get_top_y(laser)
+            laser_bottom_y = laser_top_y + LASER_HEIGHT
+
+            collisions = canvas.find_overlapping(laser_left_x, laser_top_y, laser_right_x, laser_bottom_y) #Check for collisions with the enemy ship
+            if any(part in collisions for part in enemy): #If the laser collides with any part of the enemy ship, remove the laser and the enemy ship from the canvas
+                canvas.delete(laser)
+                lasers.remove(laser)
+                for part in enemy:
+                    canvas.delete(part)
+                enemy = []  # Clear the enemy list to indicate that the enemy has been destroyed
+                break  # Exit the loop since the laser has been removed
+
             laser_top_y = canvas.get_top_y(laser)
 
             if laser_top_y < 0: #If the laser has moved off the top of the canvas, remove it from the canvas and the lasers list
