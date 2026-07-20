@@ -19,7 +19,7 @@ ENEMY_HEIGHT = 34
 ENEMY_COUNT = 5
 ENEMY_SPACING = 12
 ENEMY_START_Y = 70
-ENEMY_SPEED = 2
+ENEMY_SPEED = 5
 ENEMY_DROP_DISTANCE = 12
 
 def main():
@@ -42,7 +42,24 @@ def main():
 
     lasers = []
     
+    game_over = False
+    game_over_title = None
+    game_over_frames = 0
+
     while True:
+        if game_over:
+            game_over_frames += 1
+
+            if game_over_frames % 15 == 0:
+                if (game_over_frames // 15) % 2 == 0:
+                    canvas.set_fill_color(game_over_title, "dark red")
+                else:
+                    canvas.set_fill_color(game_over_title, "red")
+         
+            canvas.update()
+            time.sleep(DELAY)
+            continue
+
         keys_pressed = canvas.get_new_key_presses()
 
         for key in keys_pressed:
@@ -114,9 +131,43 @@ def main():
             enemy_dx = -enemy_dx
             move_enemy_row_down(canvas, enemies)
 
+        if enemies_reached_player(canvas, enemies, player_ship):
+            game_over = True
+            game_over_title = draw_game_over(canvas)
+
         canvas.update()
         time.sleep(DELAY)
 
+
+def draw_game_over(canvas):
+    canvas.create_text(
+        CANVAS_WIDTH / 2 + 3,
+        CANVAS_HEIGHT / 2 + 3,
+        "GAME OVER",
+        "center",
+        ("Arial", 36, "bold"),
+        "dark red"
+    )
+
+    game_over_title = canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2,
+        "GAME OVER",
+        "center",
+        ("Arial", 36, "bold"),
+        "red"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        CANVAS_HEIGHT / 2 + 45,
+        "THE INVASION WAS SUCCESSFUL",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    return game_over_title
 
 def fire_laser(canvas, player_ship):
     laser_left_x = canvas.get_left_x(player_ship[6])  # Get the left x-coordinate of the nose cannon tip
@@ -160,6 +211,19 @@ def draw_background(canvas):
     canvas.create_oval(80, 180, 84, 184, "white")
     canvas.create_oval(260, 210, 264, 214, "white")
     canvas.create_oval(460, 190, 464, 194, "white")
+
+def enemies_reached_player(canvas, enemies, player_ship):
+    player_top_y = canvas.get_top_y(player_ship[6])
+
+    for enemy in enemies:
+        enemy_bottom_y = (
+            canvas.get_top_y(enemy[-1]) + 7
+        )
+
+        if enemy_bottom_y >= player_top_y:
+            return True
+
+    return False
 
 def draw_player_ship(canvas):
     player_ship = []
