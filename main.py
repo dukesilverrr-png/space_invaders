@@ -110,82 +110,88 @@ def draw_background(canvas):
 
 def draw_player_ship(canvas):
     player_ship = []
-    
+
     # Ship body
-    outer_body = canvas.create_oval(220, 435, 280, 482, "dark gray")
-    middle_body = canvas.create_oval(228, 440, 272, 476, "gray")
-    inner_body = canvas.create_oval(238, 448, 262, 468, "light gray")
+    outer_body = canvas.create_oval(227, 449, 273, 486, "dark gray")
+    middle_body = canvas.create_oval(233, 453, 267, 481, "gray")
+    inner_body = canvas.create_oval(241, 459, 259, 475, "light gray")
     player_ship.append(outer_body)
     player_ship.append(middle_body)
     player_ship.append(inner_body)
 
-
     # Cockpit glass
-    cockpit_glass = canvas.create_oval(238, 438, 262, 458, "cyan")
-    cockpit_highlight = canvas.create_oval(244, 442, 256, 452, "light blue")
+    cockpit_glass = canvas.create_oval(241, 451, 259, 467, "cyan")
+    cockpit_highlight = canvas.create_oval(245, 454, 255, 462, "light blue")
     player_ship.append(cockpit_glass)
     player_ship.append(cockpit_highlight)
 
     # Nose cannon
-    nose_cannon_base = canvas.create_rectangle(246, 410, 254, 442, "light gray")
-    nose_cannon_tip = canvas.create_rectangle(248, 398, 252, 412, "white")
+    nose_cannon_base = canvas.create_rectangle(247, 430, 253, 454, "light gray")
+    nose_cannon_tip = canvas.create_rectangle(248, 420, 252, 432, "white")
     player_ship.append(nose_cannon_base)
     player_ship.append(nose_cannon_tip)
 
     # Side cannons
-    left_cannon_base = canvas.create_rectangle(214, 450, 224, 470, "gray")
-    right_cannon_base = canvas.create_rectangle(276, 450, 286, 470, "gray")
-    left_cannon_tip = canvas.create_rectangle(216, 440, 222, 452, "light gray")
-    right_cannon_tip = canvas.create_rectangle(278, 440, 284, 452, "light gray")
+    left_cannon_base = canvas.create_rectangle(222, 460, 230, 476, "gray")
+    right_cannon_base = canvas.create_rectangle(270, 460, 278, 476, "gray")
+    left_cannon_tip = canvas.create_rectangle(224, 451, 229, 462, "light gray")
+    right_cannon_tip = canvas.create_rectangle(271, 451, 276, 462, "light gray")
     player_ship.append(left_cannon_base)
     player_ship.append(right_cannon_base)
     player_ship.append(left_cannon_tip)
     player_ship.append(right_cannon_tip)
 
     # Left wing
-    left_wing_base = canvas.create_rectangle(195, 458, 225, 472, "dark gray")
-    left_wing_highlight = canvas.create_rectangle(200, 462, 218, 468, "light gray")
+    left_wing_base = canvas.create_rectangle(207, 466, 230, 477, "dark gray")
+    left_wing_highlight = canvas.create_rectangle(211, 469, 225, 474, "light gray")
     player_ship.append(left_wing_base)
     player_ship.append(left_wing_highlight)
 
     # Right wing
-    right_wing_base = canvas.create_rectangle(275, 458, 305, 472, "dark gray")
-    right_wing_highlight = canvas.create_rectangle(282, 462, 300, 468, "light gray")
+    right_wing_base = canvas.create_rectangle(270, 466, 293, 477, "dark gray")
+    right_wing_highlight = canvas.create_rectangle(275, 469, 289, 474, "light gray")
     player_ship.append(right_wing_base)
     player_ship.append(right_wing_highlight)
 
-    # Engine base
-    left_engine_base = canvas.create_rectangle(230, 474, 245, 486, "gray")
-    right_engine_base = canvas.create_rectangle(255, 474, 270, 486, "gray")
-    left_engine_nozzle = canvas.create_rectangle(235, 478, 240, 488, "light gray")
-    right_engine_nozzle = canvas.create_rectangle(260, 478, 265, 488, "light gray")
+    # Engine bases
+    left_engine_base = canvas.create_rectangle(235, 479, 247, 490, "gray")
+    right_engine_base = canvas.create_rectangle(253, 479, 265, 490, "gray")
+    left_engine_nozzle = canvas.create_rectangle(239, 486, 243, 494, "light gray")
+    right_engine_nozzle = canvas.create_rectangle(257, 486, 261, 494, "light gray")
     player_ship.append(left_engine_base)
     player_ship.append(right_engine_base)
     player_ship.append(left_engine_nozzle)
     player_ship.append(right_engine_nozzle)
 
     # Engine flames
-    left_outer_flame = canvas.create_oval(230, 485, 245, 500, "orange")
-    right_outer_flame = canvas.create_oval(255, 485, 270, 500, "orange")
-    left_inner_flame = canvas.create_oval(234, 490, 241, 500, "yellow")
-    right_inner_flame = canvas.create_oval(259, 490, 266, 500, "yellow")
+    left_outer_flame = canvas.create_oval(235, 489, 247, 500, "orange")
+    right_outer_flame = canvas.create_oval(253, 489, 265, 500, "orange")
+    left_inner_flame = canvas.create_oval(238, 493, 244, 500, "yellow")
+    right_inner_flame = canvas.create_oval(256, 493, 262, 500, "yellow")
     player_ship.append(left_outer_flame)
     player_ship.append(right_outer_flame)
     player_ship.append(left_inner_flame)
     player_ship.append(right_inner_flame)
 
     # Small armor panels
-    left_upper_armor_panel = canvas.create_rectangle(230, 460, 238, 466, "dark gray")
-    right_upper_armor_panel = canvas.create_rectangle(262, 460, 270, 466, "dark gray")
-    left_lower_armor_panel = canvas.create_rectangle(235, 470, 242, 475, "black")
-    right_lower_armor_panel = canvas.create_rectangle(258, 470, 265, 475, "black")
+    left_upper_armor_panel = canvas.create_rectangle(
+        234, 467, 240, 472, "dark gray"
+    )
+    right_upper_armor_panel = canvas.create_rectangle(
+        260, 467, 266, 472, "dark gray"
+    )
+    left_lower_armor_panel = canvas.create_rectangle(
+        238, 475, 244, 479, "black"
+    )
+    right_lower_armor_panel = canvas.create_rectangle(
+        256, 475, 262, 479, "black"
+    )
     player_ship.append(left_upper_armor_panel)
     player_ship.append(right_upper_armor_panel)
     player_ship.append(left_lower_armor_panel)
     player_ship.append(right_lower_armor_panel)
 
     return player_ship
-
 
 def draw_enemy(canvas, enemy_x, enemy_y):
     enemy_ship = []
