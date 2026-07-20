@@ -16,6 +16,9 @@ LASER_HEIGHT = 12
 
 ENEMY_WIDTH = 60
 ENEMY_HEIGHT = 34
+ENEMY_COUNT = 5
+ENEMY_SPACING = 12
+ENEMY_START_Y = 70
 
 def main():
 
@@ -31,29 +34,41 @@ def main():
 
     player_ship = draw_player_ship(canvas)
     
-    enemy = draw_enemy(canvas, 215, 70)
+    enemies = draw_enemy_fleet(canvas)
 
     lasers = []
     
     while True:
-        keys_pressed = canvas.get_new_key_presses()#Get the new key presses since the last iteration
+        keys_pressed = canvas.get_new_key_presses()
 
-        for key in keys_pressed:#Check for key presses and add them to the keys_held set            
+        for key in keys_pressed:
             if key.keysym == "a":
                 keys_held.add("a")
+
             elif key.keysym == "d":
                 keys_held.add("d")
+
             elif key.keysym == "space" and "space" not in keys_held:
                 keys_held.add("space")
-                if len(lasers) < 3:  # Limit the number of lasers on screen to 3
-                    lasers.append(fire_laser(canvas, player_ship))
-        
-        if "a" in keys_held:
-            move_player_ship(canvas, player_ship, SHIP_MOVE_LEFT)
-        if "d" in keys_held:
-            move_player_ship(canvas, player_ship, SHIP_MOVE_RIGHT)
 
-        for laser in lasers[:]:#Make a copy of the lasers list to avoid modifying it while iterating
+                if len(lasers) < 3:
+                    lasers.append(fire_laser(canvas, player_ship))
+
+        if "a" in keys_held:
+            move_player_ship(
+                canvas,
+                player_ship,
+                SHIP_MOVE_LEFT
+            )
+
+        if "d" in keys_held:
+            move_player_ship(
+                canvas,
+                player_ship,
+                SHIP_MOVE_RIGHT
+            )
+
+        for laser in lasers[:]:
             canvas.move(laser, 0, -10)
 
             laser_left_x = canvas.get_left_x(laser)
@@ -61,23 +76,36 @@ def main():
             laser_top_y = canvas.get_top_y(laser)
             laser_bottom_y = laser_top_y + LASER_HEIGHT
 
-            collisions = canvas.find_overlapping(laser_left_x, laser_top_y, laser_right_x, laser_bottom_y) #Check for collisions with the enemy ship
-            if any(part in collisions for part in enemy): #If the laser collides with any part of the enemy ship, remove the laser and the enemy ship from the canvas
+            collisions = canvas.find_overlapping(
+                laser_left_x,
+                laser_top_y,
+                laser_right_x,
+                laser_bottom_y
+            )
+
+            collided_enemy = None
+
+            for enemy in enemies:
+                if any(part in collisions for part in enemy):
+                    collided_enemy = enemy
+                    break
+
+            if collided_enemy is not None:
                 canvas.delete(laser)
                 lasers.remove(laser)
-                for part in enemy:
+
+                for part in collided_enemy:
                     canvas.delete(part)
-                enemy = []  # Clear the enemy list to indicate that the enemy has been destroyed
-                break  # Exit the loop since the laser has been removed
 
-            laser_top_y = canvas.get_top_y(laser)
+                enemies.remove(collided_enemy)
+                continue
 
-            if laser_top_y < 0: #If the laser has moved off the top of the canvas, remove it from the canvas and the lasers list
+            if laser_top_y < 0:
                 canvas.delete(laser)
                 lasers.remove(laser)
-                
+
         canvas.update()
-        time.sleep(DELAY)    
+        time.sleep(DELAY)
 
 
 def fire_laser(canvas, player_ship):
@@ -207,6 +235,20 @@ def draw_player_ship(canvas):
     player_ship.append(right_lower_armor_panel)
 
     return player_ship
+
+def draw_enemy_fleet(canvas):
+    enemies = []
+
+    fleet_width = (ENEMY_COUNT * ENEMY_WIDTH + (ENEMY_COUNT - 1) * ENEMY_SPACING)
+    
+    enemy_start_x = (CANVAS_WIDTH - fleet_width) / 2
+
+    for i in range(ENEMY_COUNT):
+        enemy_x = enemy_start_x + i * (ENEMY_WIDTH + ENEMY_SPACING)
+        enemy = draw_enemy(canvas, enemy_x, ENEMY_START_Y)
+        enemies.append(enemy)
+
+    return enemies
 
 def draw_enemy(canvas, enemy_x, enemy_y):
     enemy_ship = []
