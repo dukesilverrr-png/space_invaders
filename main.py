@@ -21,9 +21,9 @@ ENEMY_SPACING = 12
 ENEMY_START_Y = 70
 ENEMY_SPEED = 3
 ENEMY_DROP_DISTANCE = 15
+ENEMY_SPEED_INCREASE = 1
 
 
-# TODO: Increase enemy speed as enemies are destroyed.
 # TODO: Add multiple rows of enemies.
 # TODO: Add a special saucer with a visible alien pilot.
 # TODO: Make the special saucer drop an upgrade when destroyed.
@@ -57,7 +57,9 @@ def main():
     player_ship = draw_player_ship(canvas)
     
     enemies = draw_enemy_fleet(canvas)
+    
 
+    starting_enemy_count = len(enemies)
     # Set the enemies' starting horizontal speed and direction
     enemy_dx = ENEMY_SPEED
 
@@ -93,6 +95,7 @@ def main():
 
                     player_ship = draw_player_ship(canvas)
                     enemies = draw_enemy_fleet(canvas)
+                    starting_enemy_count = len(enemies)
 
                     lasers = []
                     enemy_dx = ENEMY_SPEED
@@ -206,11 +209,21 @@ def main():
             if collided_enemy is not None:
                 canvas.delete(laser)
                 lasers.remove(laser)
-
                 for part in collided_enemy:
                     canvas.delete(part)
 
+                
                 enemies.remove(collided_enemy)
+                
+                # Calculate the number of enemies destroyed and use that to calculate the speed increase
+                enemies_destroyed = starting_enemy_count - len(enemies)
+                new_enemy_speed = (ENEMY_SPEED + enemies_destroyed + ENEMY_SPEED_INCREASE)
+                
+                # Preserve the enemies direction while applying its new speed
+                if enemy_dx > 0:
+                    enemy_dx = new_enemy_speed
+                else:
+                    enemy_dx = -new_enemy_speed
 
                 continue
             # Remove lasers after they travel beyond the top of the canvas
