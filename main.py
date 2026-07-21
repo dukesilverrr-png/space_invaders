@@ -15,6 +15,7 @@ SHIP_HEIGHT = 60
 SHIP_START_X = (CANVAS_WIDTH - SHIP_WIDTH) / 2
 SHIP_START_Y = CANVAS_HEIGHT - SHIP_HEIGHT
 
+PLAYER_STARTING_LIVES = 3
 
 LASER_WIDTH = 4
 LASER_HEIGHT = 12
@@ -40,7 +41,6 @@ SPACE_BETWEEN_ENEMY_ROWS = 15
 # TODO: Add an upgrade that increases the on-screen laser limit.
 # TODO: Add larger and stronger enemies in later levels.
 # TODO: Add a score system.
-# TODO: Add player lives.
 # TODO: Add a high score system.
 # TODO: Add a title screen.
 # TODO: Add a level system.
@@ -66,6 +66,9 @@ def main():
     player_ship = draw_player_ship(canvas)
     
     enemies = draw_enemy_fleet(canvas)
+
+    player_lives = PLAYER_STARTING_LIVES
+    lives_display = draw_lives(canvas, player_lives)
     
     # Record the fleet's starting size so destroyed enemies can be counted
     starting_enemy_count = len(enemies)
@@ -105,7 +108,12 @@ def main():
                     draw_background(canvas)
 
                     player_ship = draw_player_ship(canvas)
+
                     enemies = draw_enemy_fleet(canvas)
+
+                    player_lives = PLAYER_STARTING_LIVES
+                    lives_display = draw_lives(canvas, player_lives)
+
                     starting_enemy_count = len(enemies)
 
                     lasers = []
@@ -284,11 +292,20 @@ def main():
                 enemy_laser_bottom_y
             )
 
+            # Check if the enemy laser has hit any part of the player's ship
             if any(part in enemy_laser_collisions for part in player_ship):
                 canvas.delete(enemy_laser)
                 enemy_lasers.remove(enemy_laser)
-                game_over = True
-                game_over_title = draw_game_over(canvas)
+                # Decrease the player's lives and update the display
+                player_lives -= 1
+                canvas.delete(lives_display)
+                lives_display = draw_lives(canvas, player_lives)
+
+            # Check if the player has run out of lives and trigger the game over screen
+                if player_lives <= 0:
+                    game_over = True
+                    game_over_title = draw_game_over(canvas)
+
                 break
 
             # Remove the enemy laser from the canvas after it leaves the bottom
@@ -299,6 +316,16 @@ def main():
         canvas.update()
         time.sleep(DELAY)
 
+# Draw the player's remaining lives on the canvas
+def draw_lives(canvas, player_lives):
+    return canvas.create_text(
+        55,
+        20,
+        f"Lives: {player_lives}",
+        "center",
+        ("Arial", 14, "bold"),
+        "white"
+    )
 
 def fire_enemy_laser(canvas, enemy):
     enemy_center_x = canvas.get_left_x(enemy[1]) + ENEMY_WIDTH / 2
