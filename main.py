@@ -1,5 +1,6 @@
 from graphics import Canvas
 import time
+import random
 
 DELAY = 0.02
 
@@ -17,7 +18,10 @@ SHIP_START_Y = CANVAS_HEIGHT - SHIP_HEIGHT
 
 LASER_WIDTH = 4
 LASER_HEIGHT = 12
-
+ENEMY_LASER_SPEED = 5
+ENEMY_LASER_WIDTH = 4
+ENEMY_LASER_HEIGHT = 12
+ENEMY_FIRE_CHANCE = 0.005
 
 ENEMY_WIDTH = 50
 ENEMY_HEIGHT = 30
@@ -71,7 +75,8 @@ def main():
 
     # Store the Canvas object ID of every active laser
     lasers = []
-    
+    enemy_lasers = []
+
     # Track the game-over screen and its title animation
     game_over = False
     game_over_title = None
@@ -104,7 +109,11 @@ def main():
                     starting_enemy_count = len(enemies)
 
                     lasers = []
+
+                    enemy_lasers = []
+
                     enemy_dx = ENEMY_SPEED
+
                     keys_held.clear()
 
                     game_over = False
@@ -245,18 +254,63 @@ def main():
         # Move the enemy fleet horizontally
         move_enemy_row(canvas, enemies, enemy_dx)
 
-        # Reverse the fleet and move it downward when it reaches an edge
+        # Move the enemies closer to the bottom of the canvas
         if enemy_row_hit_edge(canvas, enemies):
             enemy_dx = -enemy_dx
             move_enemy_row_down(canvas, enemies)
-
+        
         # Trigger game over if any enemy reaches the player's ship height
         if enemies_reached_player(canvas, enemies, player_ship):
             game_over = True
             game_over_title = draw_game_over(canvas)
 
+        # Make the enemies fire at the player randomly
+        if enemies and random.random() < ENEMY_FIRE_CHANCE:
+            shooting_enemy = random.choice(enemies)
+            enemy_lasers.append(fire_enemy_laser(canvas, shooting_enemy))
+
+        for enemy_laser in enemy_lasers[:]:
+            canvas.move(enemy_laser, 0, ENEMY_LASER_SPEED)
+
+            enemy_laser_left_x = canvas.get_left_x(enemy_laser)
+            enemy_laser_right_x = enemy_laser_left_x + ENEMY_LASER_WIDTH
+            enemy_laser_top_y = canvas.get_top_y(enemy_laser)
+            enemy_laser_bottom_y = enemy_laser_top_y + ENEMY_LASER_HEIGHT
+
+            enemy_laser_collisions = canvas.find_overlapping(
+                enemy_laser_left_x,
+                enemy_laser_top_y,
+                enemy_laser_right_x,
+                enemy_laser_bottom_y
+            )
+
+            if any(part in enemy_laser_collisions for part in player_ship):
+                canvas.delete(enemy_laser)
+                enemy_lasers.remove(enemy_laser)
+                game_over = True
+                game_over_title = draw_game_over(canvas)
+                break
+
+            # Remove the enemy laser from the canvas after it leaves the bottom
+            if enemy_laser_top_y > CANVAS_HEIGHT:
+                canvas.delete(enemy_laser)
+                enemy_lasers.remove(enemy_laser)
+
         canvas.update()
         time.sleep(DELAY)
+
+
+def fire_enemy_laser(canvas, enemy):
+    enemy_center_x = canvas.get_left_x(enemy[1]) + ENEMY_WIDTH / 2
+    enemy_bottom_y = canvas.get_top_y(enemy[-1]) + ENEMY_HEIGHT * 0.21
+
+    return canvas.create_rectangle(
+        enemy_center_x - ENEMY_LASER_WIDTH / 2,
+        enemy_bottom_y,
+        enemy_center_x + ENEMY_LASER_WIDTH / 2,
+        enemy_bottom_y + ENEMY_LASER_HEIGHT,
+        "yellow"
+    )
 
 # Draw the victory screen and its text
 def draw_victory(canvas):
@@ -423,8 +477,7 @@ def enemies_reached_player(canvas, enemies, player_ship):
 
     # Check each enemy's bottom y-coordinate to see if it has reached or passed the player's ship top y-coordinate
     for enemy in enemies:
-        enemy_bottom_y = (
-        canvas.get_top_y(enemy[-1]) + ENEMY_HEIGHT * 0.21)
+        enemy_bottom_y = (canvas.get_top_y(enemy[-1]) + ENEMY_HEIGHT * 0.21)
 
         # If any enemy's bottom y-coordinate is greater than or equal to the player's ship top y-coordinate, return True (game over)
         if enemy_bottom_y >= player_top_y:
