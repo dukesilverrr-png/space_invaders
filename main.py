@@ -21,10 +21,10 @@ ENEMY_SPACING = 12
 ENEMY_START_Y = 70
 ENEMY_SPEED = 3
 ENEMY_DROP_DISTANCE = 15
-ENEMY_SPEED_INCREASE = 1
+ENEMY_SPEED_INCREASE = .01
+ENEMY_ROW_COUNT = 3
+SPACE_BETWEEN_ENEMY_ROWS = 15
 
-
-# TODO: Add multiple rows of enemies.
 # TODO: Add a special saucer with a visible alien pilot.
 # TODO: Make the special saucer drop an upgrade when destroyed.
 # TODO: Allow the player to catch falling upgrades.
@@ -58,8 +58,9 @@ def main():
     
     enemies = draw_enemy_fleet(canvas)
     
-
+    # Record the fleet's starting size so destroyed enemies can be counted
     starting_enemy_count = len(enemies)
+
     # Set the enemies' starting horizontal speed and direction
     enemy_dx = ENEMY_SPEED
 
@@ -520,9 +521,15 @@ def enemy_row_hit_edge(canvas, enemies):
     if len(enemies) == 0:
         return False
     
-    # Calculate the leftmost and rightmost x-coordinates of the enemy row so we can determine if it has hit the canvas edges
-    left_edge = canvas.get_left_x(enemies[0][1])
-    right_edge = (canvas.get_left_x(enemies[-1][1]) + ENEMY_WIDTH)
+    # Find the leftmost and rightmost edges across all surviving enemies
+    left_edge = min(
+        canvas.get_left_x(enemy[1])
+        for enemy in enemies
+    )
+    right_edge = max(
+        canvas.get_left_x(enemy[1]) + ENEMY_WIDTH
+        for enemy in enemies
+    )
 
     return left_edge <= 0 or right_edge >= CANVAS_WIDTH
 
@@ -550,11 +557,14 @@ def draw_enemy_fleet(canvas):
     # Calculate the starting x-coordinate for the first enemy ship to center the fleet horizontally on the canvas
     enemy_start_x = (CANVAS_WIDTH - fleet_width) / 2
 
-    # Draw each enemy ship in the fleet, spaced evenly apart, and add them to the enemies list
-    for i in range(ENEMY_COUNT):
-        enemy_x = enemy_start_x + i * (ENEMY_WIDTH + ENEMY_SPACING)
-        enemy = draw_enemy(canvas, enemy_x, ENEMY_START_Y)
-        enemies.append(enemy)
+    # Draw each row and place every enemy at its calculated horizontal and vertical position
+    for row in range(ENEMY_ROW_COUNT):
+        enemy_y = (ENEMY_START_Y + row * (ENEMY_HEIGHT + SPACE_BETWEEN_ENEMY_ROWS))
+
+        for i in range(ENEMY_COUNT):
+            enemy_x = enemy_start_x + i * (ENEMY_WIDTH + ENEMY_SPACING)
+            enemy = draw_enemy(canvas, enemy_x, enemy_y)
+            enemies.append(enemy)
 
     return enemies
 
