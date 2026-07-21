@@ -23,9 +23,10 @@ ENEMY_SPEED = 3
 ENEMY_DROP_DISTANCE = 15
 
 def main():
-
+    # Create the game window
     canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
+    # Track which movement and firing keys are currently held down
     keys_held = set()
     canvas.bind(
         "<KeyRelease>",
@@ -49,6 +50,21 @@ def main():
     game_won = False
     victory_title = None
     victory_frames = 0
+
+    # TODO: Increase enemy speed as enemies are destroyed.
+    # TODO: Add multiple rows of enemies.
+    # TODO: Add a special saucer with a visible alien pilot.
+    # TODO: Make the special saucer drop an upgrade when destroyed.
+    # TODO: Allow the player to catch falling upgrades.
+    # TODO: Add an upgrade that increases the on-screen laser limit.
+    # TODO: Add larger and stronger enemies in later levels.
+    # TODO: Add a score system.
+    # TODO: Add player lives.
+    # TODO: Add a high score system.
+    # TODO: Add a title screen.
+    # TODO: Add a level system.
+    # TODO: Add a pause feature.
+    # TODO: Add sound effects and music.
 
     while True:
         if game_over or game_won:
