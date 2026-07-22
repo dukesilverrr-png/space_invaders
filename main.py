@@ -24,6 +24,8 @@ ENEMY_LASER_WIDTH = 4
 ENEMY_LASER_HEIGHT = 12
 ENEMY_FIRE_CHANCE = 0.005
 
+POINTS_PER_ENEMY = 100
+
 ENEMY_WIDTH = 50
 ENEMY_HEIGHT = 30
 ENEMY_COUNT = 5
@@ -40,12 +42,11 @@ SPACE_BETWEEN_ENEMY_ROWS = 15
 # TODO: Allow the player to catch falling upgrades.
 # TODO: Add an upgrade that increases the on-screen laser limit.
 # TODO: Add larger and stronger enemies in later levels.
-# TODO: Add a score system.
-# TODO: Add a high score system.
 # TODO: Add a title screen.
 # TODO: Add a level system.
 # TODO: Add a pause feature.
 # TODO: Add sound effects and music.
+# TODO: Add a high score system.
 
 def main():
     # Create the game window
@@ -69,6 +70,8 @@ def main():
 
     player_lives = PLAYER_STARTING_LIVES
     lives_display = draw_lives(canvas, player_lives)
+    score = 0
+    score_display = draw_score(canvas, score)
     
     # Record the fleet's starting size so destroyed enemies can be counted
     starting_enemy_count = len(enemies)
@@ -113,6 +116,8 @@ def main():
 
                     player_lives = PLAYER_STARTING_LIVES
                     lives_display = draw_lives(canvas, player_lives)
+                    score = 0
+                    score_display = draw_score(canvas, score)
 
                     starting_enemy_count = len(enemies)
 
@@ -237,6 +242,10 @@ def main():
 
                 
                 enemies.remove(collided_enemy)
+                # Update the score and redraw it on the canvas
+                score += POINTS_PER_ENEMY
+                canvas.delete(score_display)
+                score_display = draw_score(canvas, score)
                 
                 # Calculate the number of enemies destroyed and use that to calculate the speed increase
                 enemies_destroyed = starting_enemy_count - len(enemies)
@@ -315,6 +324,17 @@ def main():
 
         canvas.update()
         time.sleep(DELAY)
+
+# Draw the player's score on the canvas
+def draw_score(canvas, score):
+    return canvas.create_text(
+        440,
+        20,
+        f"Score: {score}",
+        "center",
+        ("Arial", 14, "bold"),
+        "white"
+    )
 
 # Draw the player's remaining lives on the canvas
 def draw_lives(canvas, player_lives):
