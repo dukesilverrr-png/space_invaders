@@ -46,7 +46,6 @@ SPACE_BETWEEN_ENEMY_ROWS = 15
 # TODO: Add a level system.
 # TODO: Add a pause feature.
 # TODO: Add sound effects and music.
-# TODO: Add a high score system.
 
 def main():
     # Create the game window
@@ -72,6 +71,8 @@ def main():
     lives_display = draw_lives(canvas, player_lives)
     score = 0
     score_display = draw_score(canvas, score)
+    high_score = 0
+    high_score_display = draw_high_score(canvas, high_score)
     
     # Record the fleet's starting size so destroyed enemies can be counted
     starting_enemy_count = len(enemies)
@@ -118,6 +119,9 @@ def main():
                     lives_display = draw_lives(canvas, player_lives)
                     score = 0
                     score_display = draw_score(canvas, score)
+                    # Redraw the high score display while preserving the current high score
+                    high_score_display = draw_high_score(canvas, high_score)
+                    
 
                     starting_enemy_count = len(enemies)
 
@@ -242,10 +246,14 @@ def main():
 
                 
                 enemies.remove(collided_enemy)
-                # Update the score and redraw it on the canvas
+                # Update the score and record a new high score when one is reached
                 score += POINTS_PER_ENEMY
                 canvas.delete(score_display)
                 score_display = draw_score(canvas, score)
+                if score > high_score:
+                    high_score = score
+                    canvas.delete(high_score_display)
+                    high_score_display = draw_high_score(canvas, high_score)
                 
                 # Calculate the number of enemies destroyed and use that to calculate the speed increase
                 enemies_destroyed = starting_enemy_count - len(enemies)
@@ -331,6 +339,16 @@ def draw_score(canvas, score):
         440,
         20,
         f"Score: {score}",
+        "center",
+        ("Arial", 14, "bold"),
+        "white"
+    )
+# Draw the player's high score on the canvas
+def draw_high_score(canvas, high_score):
+    return canvas.create_text(
+        250,
+        20,
+        f"High Score: {high_score}",
         "center",
         ("Arial", 14, "bold"),
         "white"
