@@ -42,7 +42,6 @@ SPACE_BETWEEN_ENEMY_ROWS = 15
 # TODO: Allow the player to catch falling upgrades.
 # TODO: Add an upgrade that increases the on-screen laser limit.
 # TODO: Add larger and stronger enemies in later levels.
-# TODO: Add a title screen.
 # TODO: Add a level system.
 # TODO: Add a pause feature.
 # TODO: Add sound effects and music.
@@ -61,6 +60,12 @@ def main():
     )
 
     # Draw the background and create the starting game objects
+    draw_background(canvas)
+
+    if not show_title_screen(canvas):
+        return
+
+    canvas.clear()
     draw_background(canvas)
     
     player_ship = draw_player_ship(canvas)
@@ -329,6 +334,67 @@ def main():
             if enemy_laser_top_y > CANVAS_HEIGHT:
                 canvas.delete(enemy_laser)
                 enemy_lasers.remove(enemy_laser)
+
+        canvas.update()
+        time.sleep(DELAY)
+
+# Display the title screen and wait for the player to start or quit the game
+def show_title_screen(canvas):
+    canvas.create_text(
+        CANVAS_WIDTH / 2 + 3,
+        175 + 3,
+        "ALIEN INVASION",
+        "center",
+        ("Arial", 36, "bold"),
+        "dark green"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        175,
+        "ALIEN INVASION",
+        "center",
+        ("Arial", 36, "bold"),
+        "lime green"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        245,
+        "Press ENTER to start",
+        "center",
+        ("Arial", 16, "bold"),
+        "white"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        280,
+        "A / D to move     SPACE to fire",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    canvas.create_text(
+        CANVAS_WIDTH / 2,
+        315,
+        "Press Q to quit",
+        "center",
+        ("Arial", 12, "bold"),
+        "white"
+    )
+
+    while True:
+        keys_pressed = canvas.get_new_key_presses()
+
+        for key in keys_pressed:
+            if key.keysym == "Return":
+                return True
+
+            if key.keysym == "q":
+                canvas.winfo_toplevel().destroy()
+                return False
 
         canvas.update()
         time.sleep(DELAY)
